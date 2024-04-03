@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         LinkedIn Job Display
-// @namespace    https://github.com/lemonteaau/
+// @namespace    https://github.com/lemonteaau/LinkedIn-Job-Display-Userscript
 // @version      0.1
 // @description  Display company name, job title, post date, applicant number, location and seniority in a floating window on LinkedIn jobs page
 // @author       lemontea
