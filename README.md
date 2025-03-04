@@ -2,7 +2,7 @@
 
 A Tampermonkey userscript that automatically analyzes LinkedIn job postings to extract key information and requirements.
 
-![image](https://github.com/user-attachments/assets/09cba4f1-7324-4cff-b850-3476e8e73b9b)
+![SCR-20250304-pqfv](https://github.com/user-attachments/assets/f8daffbc-f103-4d02-a719-0a193b36215e)
 
 
 ## Overview
