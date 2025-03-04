@@ -444,23 +444,62 @@ function checkCitizenshipRequirements(text) {
                 /(?:at least|minimum)\s*(\d+)(?:\+|\s*\+)?\s*years?/i,
                 /(\d+)(?:\+|\s*\+)?\s*to\s*\d+\s*years?(?:\s+of)?\s+experience/i
             ];
-
+            
+            // Create exclusion patterns - phrases that should NOT be counted as experience requirements
+            const exclusionPatterns = [
+                /company.*(?:founded|established|history|over)\s+\d+\s+years/i,
+                /has\s+(?:been|served|operated|worked)(?:\s+as)?(?:\s+an?)?(?:\s+\w+)?\s+(?:for|over)\s+\d+\s+years/i,
+                /(?:since|established in|founded in|for over|more than)\s+\d+\s+years/i,
+                /history(?:\s+\w+){0,3}\s+\d+\s+years/i,
+                /\d+\s+years\s+(?:in business|of history|of service)/i
+            ];
+            
+            // First check if the text contains exclusion patterns
+            for (const excludePattern of exclusionPatterns) {
+                if (excludePattern.test(text)) {
+                    // If found, remove or mark these sections before looking for experience requirements
+                    const match = excludePattern.exec(text);
+                    if (match) {
+                        // Create a temporary copy of text with the company history mention removed
+                        const tempText = text.replace(match[0], " [COMPANY_HISTORY] ");
+                        
+                        // Now search in the cleaned text
+                        for (const regex of expRegexPatterns) {
+                            const expMatch = tempText.match(regex);
+                            if (expMatch) {
+                                return expMatch[0];
+                            }
+                        }
+                    }
+                }
+            }
+    
+            // If no exclusions found, proceed with normal detection
             for (const regex of expRegexPatterns) {
                 const match = text.match(regex);
                 if (match) {
+                    // Additional check - if the experience is over 15 years, it's likely not a real requirement
+                    const years = parseInt(match[1]);
+                    if (years > 15) {
+                        continue; // Skip this match, likely a company description
+                    }
                     return match[0];
                 }
             }
-
+    
             // Simplified pattern as fallback
             const simpleMatch = text.match(/(\d+)\+?\s*years?/i);
             if (simpleMatch) {
-                return simpleMatch[0];
+                const years = parseInt(simpleMatch[1]);
+                // Only accept reasonable experience requirements (1-15 years)
+                if (years > 0 && years <= 15) {
+                    return simpleMatch[0];
+                }
             }
         } catch (error) {
             console.error("Error in extractExperienceRequirements:", error);
         }
-
+    
         return "No specific experience mentioned";
     }
 
